@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1,
+    "title": "Torta de Chocolate",
+    "description": "Bizcocho húmedo de cacao con relleno de ganache y cobertura de chocolate amargo.",
+    "code": "TCH001",
+    "price": 7500,
+    "status": true,
+    "stock": 12,
+    "category": "Tortas",
+    "thumbnails": [
+      "/images/tortas/torta-chocolate-1.jpg",
+      "/images/tortas/torta-chocolate-2.jpg"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Cheesecake de Frutos Rojos",
+    "description": "Base crocante de galleta con crema de queso y cobertura de frutos rojos naturales.",
+    "code": "CHR002",
+    "price": 8900,
+    "status": true,
+    "stock": 8,
+    "category": "Tortas",
+    "thumbnails": [
+      "/images/tortas/cheesecake-frutos-rojos-1.jpg",
+      "/images/tortas/cheesecake-frutos-rojos-2.jpg"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Medialunas de Manteca",
+    "description": "Clásicas medialunas artesanales, suaves y doradas, ideales para acompañar el café.",
+    "code": "MM003",
+    "price": 1200,
+    "status": true,
+    "stock": 30,
+    "category": "Facturas",
+    "thumbnails": [
+      "/images/facturas/medialunas-1.jpg",
+      "/images/facturas/medialunas-2.jpg"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Brownie con Nueces",
+    "description": "Brownie de chocolate intenso con trozos de nueces, crocante por fuera y húmedo por dentro.",
+    "code": "BN004",
+    "price": 2500,
+    "status": true,
+    "stock": 15,
+    "category": "Porciones",
+    "thumbnails": [
+      "/images/porciones/brownie-nueces-1.jpg"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Lemon Pie",
+    "description": "Tarta con base de masa sablée, crema de limón y merengue italiano tostado.",
+    "code": "LP005",
+    "price": 6800,
+    "status": true,
+    "stock": 10,
+    "category": "Tartas",
+    "thumbnails": [
+      "/images/tartas/lemon-pie-1.jpg",
+      "/images/tartas/lemon-pie-2.jpg"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Alfajores de Maicena",
+    "description": "Alfajores rellenos con dulce de leche y cubiertos con coco rallado.",
+    "code": "AM006",
+    "price": 2000,
+    "status": true,
+    "stock": 25,
+    "category": "Alfajores",
+    "thumbnails": [
+      "/images/alfajores/maicena-1.jpg"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Cupcakes de Vainilla",
+    "description": "Mini tortas de vainilla decoradas con buttercream y confites de colores.",
+    "code": "CV007",
+    "price": 3500,
+    "status": true,
+    "stock": 18,
+    "category": "Cupcakes",
+    "thumbnails": [
+      "/images/cupcakes/vainilla-1.jpg",
+      "/images/cupcakes/vainilla-2.jpg"
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Tarta de Manzana",
+    "description": "Clásica tarta de manzana caramelizada con un toque de canela.",
+    "code": "TM008",
+    "price": 6400,
+    "status": true,
+    "stock": 9,
+    "category": "Tartas",
+    "thumbnails": [
+      "/images/tartas/manzana-1.jpg"
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Cookies con Chips de Chocolate",
+    "description": "Galletas crocantes por fuera y suaves por dentro, con abundantes chips de chocolate.",
+    "code": "CC009",
+    "price": 1800,
+    "status": true,
+    "stock": 40,
+    "category": "Galletas",
+    "thumbnails": [
+      "/images/galletas/cookies-choco-1.jpg"
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Tiramisú",
+    "description": "Postre italiano con capas de vainillas, café, crema mascarpone y cacao espolvoreado.",
+    "code": "TI010",
+    "price": 7200,
+    "status": true,
+    "stock": 7,
+    "category": "Postres",
+    "thumbnails": [
+      "/images/postres/tiramisu-1.jpg",
+      "/images/postres/tiramisu-2.jpg"
+    ]
+  }
+]
