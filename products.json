@@ -134,5 +134,19 @@
       "/images/postres/tiramisu-1.jpg",
       "/images/postres/tiramisu-2.jpg"
     ]
+  },
+  {
+    "id": 11,
+    "title": "Helado de Franui",
+    "description": "Helado de crema americada con frambuesas cubiertas de doble chocolate",
+    "code": "HF067",
+    "price": 15000,
+    "status": true,
+    "stock": 20,
+    "category": "Postres",
+    "thumbnails": [
+      "/images/postres/helado-franui-1.jpg",
+      "/images/postres/helado-franui-2.jpg"
+    ]
   }
 ]

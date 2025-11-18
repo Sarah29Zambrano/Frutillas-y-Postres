@@ -1,20 +1,15 @@
 import { Router } from "express";
 import { readFileSync, writeFileSync } from "fs";
+import CartManager from "../managers/CartManager.js";
 
 const router = Router();
+const cartManager = new CartManager("./carts.json", "./products.json");
 
 let carts = JSON.parse(readFileSync("./carts.json", "utf-8"));
 let products = JSON.parse(readFileSync("./products.json", "utf-8"));
 
 router.post("/", (req, res) => {
-  const newCart = {
-    id: carts.length + 1,
-    products: [],
-    ...req.body
-  };
-
-  carts.push(newCart);
-  writeFileSync("./carts.json", JSON.stringify(carts, null, 2), "utf-8");
+  const newCart = cartManager.createCart(req.body);
 
   res.status(201).json({
     message: "¡Nuevo carrito agregado exitosamente!",
@@ -23,8 +18,7 @@ router.post("/", (req, res) => {
 });
 
 router.get("/:cid", (req, res) => {
-  const cartId = req.params.cid;
-  const cart = carts.find(c => c.id == cartId);
+  const cart = cartManager.getCartById(req.params.cid);
 
   if (!cart) {
     return res.status(404).json({ message: "¡Carrito inexistente!" });
@@ -34,33 +28,19 @@ router.get("/:cid", (req, res) => {
 });
 
 router.post("/:cid/product/:pid", (req, res) => {
-  const cartId = req.params.cid;
-  const cart = carts.find(c => c.id == cartId);
+  const result = cartManager.addProductToCart(req.params.cid, req.params.pid);
 
-  if (!cart) {
+  if (result.error === "CART_NOT_FOUND") {
     return res.status(404).json({ message: "¡Carrito inexistente!" });
   }
 
-  const productId = req.params.pid;
-  const product = products.find(p => p.id == productId);
-
-  if (!product) {
+  if (result.error === "PRODUCT_NOT_FOUND") {
     return res.status(404).json({ message: "¡Producto inexistente!" });
   }
 
-  const cartProduct = cart.products.find(p => p.product == productId);
-
-  if (!cartProduct) {
-    cart.products.push({ product: product.id, quantity: 1 });
-  } else {
-    cartProduct.quantity += 1;
-  }
-
-  writeFileSync("./carts.json", JSON.stringify(carts, null, 2), "utf-8");
-
   res.status(201).json({
-    message: `Producto agregado correctamente al carrito ${cartId}`,
-    cart
+    message: `Producto agregado correctamente al carrito ${req.params.cid}`,
+    cart: result
   });
 });
 

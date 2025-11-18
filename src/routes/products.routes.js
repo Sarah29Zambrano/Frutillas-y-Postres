@@ -1,17 +1,15 @@
 import { Router } from "express";
 import { readFileSync, writeFileSync } from "fs";
+import { productManager, emitUpdatedProducts } from "../App.js";
 
 const router = Router();
 
-let products = JSON.parse(readFileSync("./products.json", "utf-8"));
-
 router.get("/", (req, res) => {
-  res.status(200).json(products);
+  res.status(200).json(productManager.getProducts());
 });
 
 router.get("/:pid", (req, res) => {
-  const productId = req.params.pid;
-  const product = products.find(p => p.id == productId);
+  const product = productManager.getProductById(req.params.pid);
 
   if (!product) {
     return res.status(404).json({ message: "¡Producto no encontrado!" });
@@ -20,13 +18,9 @@ router.get("/:pid", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const newProduct = {
-    id: products.length + 1,
-    ...req.body
-  };
+  const newProduct = productManager.addProduct(req.body);
 
-  products.push(newProduct);
-  writeFileSync("./products.json", JSON.stringify(products, null, 2), "utf-8");
+  emitUpdatedProducts();
 
   res.status(201).json({
     message: "¡Producto creado con éxito!",
@@ -35,42 +29,32 @@ router.post("/", (req, res) => {
 });
 
 router.put("/:pid", (req, res) => {
-  const productId = req.params.pid;
-  const product = products.find(p => p.id == productId);
+  const productoActualizado = productManager.updateProduct(req.params.pid, req.body);
 
-  if (!product) {
+  if (!productoActualizado) {
     return res.status(404).json({ message: "Not Found" });
   }
-
-  const productoAModificar = { id: product.id, ...req.body };
-
-  const productosModificados = products.map(p =>
-    p.id === product.id ? productoAModificar : p
-  );
-
-  writeFileSync("./products.json", JSON.stringify(productosModificados, null, 2), "utf-8");
+  
+  emitUpdatedProducts();
 
   res.status(201).json({
     message: "¡Producto modificado con éxito!",
-    product: productoAModificar
+    product: productoActualizado
   });
 });
 
 router.delete("/:pid", (req, res) => {
-  const productId = req.params.pid;
-  const product = products.find(p => p.id == productId);
+  const deleted = productManager.deleteProduct(req.params.pid);
 
-  if (!product) {
+  if (!deleted) {
     return res.status(404).json({ message: "¡Producto no encontrado!" });
   }
 
-  const productosActualizados = products.filter(p => p.id !== product.id);
-
-  writeFileSync("./products.json", JSON.stringify(productosActualizados, null, 2), "utf-8");
+  emitUpdatedProducts();
 
   res.status(200).json({
     message: "¡Producto eliminado con éxito!",
-    product
+    product: deleted
   });
 });
 
