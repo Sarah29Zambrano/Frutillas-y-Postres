@@ -1,63 +1,57 @@
-import fs from "fs";
+import ProductModel from "../model/products.model.js";
 
 export default class ProductManager {
-  constructor(path) {
-    this.path = path;
-    this.loadProducts();
-  }
+  async getProducts(limite, pagina, consulta, ordenamiento) {
+    const limit = parseInt(limite) || 10;
+    const page = parseInt(pagina) || 1;
+    
+    let query = {};
 
-  loadProducts() {
-    if (!fs.existsSync(this.path)) {
-      fs.writeFileSync(this.path, JSON.stringify([], null, 2));
+    if (consulta) {
+      try {
+        query = JSON.parse(consulta);
+      } catch (error) {
+        throw new Error("El parámetro 'consulta' debe ser un JSON válido.");
+      }
     }
-    this.products = JSON.parse(fs.readFileSync(this.path, "utf-8"));
+    const valorOrdenamiento = parseInt(ordenamiento)
+    const sort = valorOrdenamiento == 1 || valorOrdenamiento == -1 ? {price: valorOrdenamiento} : {};
+
+    return await ProductModel.paginate(query, {
+      limit,
+      page,
+      sort: sort,
+    });
   }
 
-  saveProducts() {
-    fs.writeFileSync(this.path, JSON.stringify(this.products, null, 2), "utf-8");
+  async getProductById(id) {
+    return await ProductModel.findOne({ id: Number(id) });
   }
 
-  getProducts() {
-    this.loadProducts();
-    return this.products;
-  }
+  async addProduct(data) {
+    const lastProduct = await ProductModel.findOne().sort({ id: -1 });
+    const newId = lastProduct ? lastProduct.id + 1 : 1;
 
-  getProductById(id) {
-    this.loadProducts();
-    return this.products.find(p => p.id == id) || null;
-  }
+    const newProduct = await ProductModel.create({
+      id: newId,
+      ...data,
+    });
 
-  addProduct(data) {
-    const newProduct = {
-      id: this.products.length + 1,
-      ...data
-    };
-    this.products.push(newProduct);
-    this.saveProducts();
     return newProduct;
   }
 
-  updateProduct(id, data) {
-    this.loadProducts();
+  async updateProduct(id, data) {
+    const updated = await ProductModel.findOneAndUpdate(
+      { id: Number(id) },
+      data,
+      { new: true }
+    );
 
-    const index = this.products.findIndex(p => p.id == id);
-    if (index === -1) return null;
-
-    const updatedProduct = { id: Number(id), ...data };
-    this.products[index] = updatedProduct;
-
-    this.saveProducts();
-
-    return updatedProduct;
+    return updated;
   }
 
-  deleteProduct(id) {
-    const product = this.products.find(p => p.id == id);
-    if (!product) return null;
-
-    this.products = this.products.filter(p => p.id != id);
-    this.saveProducts();
-
-    return product;
+  async deleteProduct(id) {
+    const deleted = await ProductModel.findOneAndDelete({ id: Number(id) });
+    return deleted;
   }
 }

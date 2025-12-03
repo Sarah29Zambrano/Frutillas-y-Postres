@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import handlebars from "express-handlebars";
@@ -8,7 +9,6 @@ import ProductManager from "./managers/ProductManager.js";
 import productsRouter from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import viewsRouter from "./routes/views.routes.js";
-import fs from "fs";
 
 const app = express();
 const server = createServer(app);
@@ -39,6 +39,10 @@ io.on("connection", socket => {
 export const emitUpdatedProducts = () => {
   io.emit("updateProducts", productManager.getProducts());
 };
+
+mongoose.connect('mongodb+srv://sarahzambrano29_db_user:Nx5jOEzXlXLaMRcn@cluster0.2qzmdko.mongodb.net/productos_carritos').then(() => {
+  console.log("Conectado")
+}).catch(e => console.log(e))
 
 server.listen(8080, () => {
   console.log("Servidor corriendo en el puerto 8080");

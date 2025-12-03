@@ -1,15 +1,11 @@
 import { Router } from "express";
-import { readFileSync, writeFileSync } from "fs";
 import CartManager from "../managers/CartManager.js";
 
 const router = Router();
 const cartManager = new CartManager("./carts.json", "./products.json");
 
-let carts = JSON.parse(readFileSync("./carts.json", "utf-8"));
-let products = JSON.parse(readFileSync("./products.json", "utf-8"));
-
-router.post("/", (req, res) => {
-  const newCart = cartManager.createCart(req.body);
+router.post("/", async (req, res) => {
+  const newCart = await cartManager.createCart();
 
   res.status(201).json({
     message: "¡Nuevo carrito agregado exitosamente!",
@@ -17,8 +13,8 @@ router.post("/", (req, res) => {
   });
 });
 
-router.get("/:cid", (req, res) => {
-  const cart = cartManager.getCartById(req.params.cid);
+router.get("/:cid", async (req, res) => {
+  const cart = await cartManager.getCartById(req.params.cid);
 
   if (!cart) {
     return res.status(404).json({ message: "¡Carrito inexistente!" });
@@ -27,8 +23,8 @@ router.get("/:cid", (req, res) => {
   res.status(200).json(cart);
 });
 
-router.post("/:cid/product/:pid", (req, res) => {
-  const result = cartManager.addProductToCart(req.params.cid, req.params.pid);
+router.post("/:cid/product/:pid", async (req, res) => {
+  const result = await cartManager.addProductToCart(req.params.cid, req.params.pid);
 
   if (result.error === "CART_NOT_FOUND") {
     return res.status(404).json({ message: "¡Carrito inexistente!" });
@@ -40,6 +36,52 @@ router.post("/:cid/product/:pid", (req, res) => {
 
   res.status(201).json({
     message: `Producto agregado correctamente al carrito ${req.params.cid}`,
+    cart: result
+  });
+});
+
+router.delete("/:cid/product/:pid", async (req, res) => {
+  const result = await cartManager.deleteProductFromCart(req.params.cid, req.params.pid);
+
+  if (result.error) return res.status(404).json(result);
+
+  res.json({
+    message: "Producto eliminado del carrito",
+    cart: result
+  });
+});
+
+router.put("/:cid", async (req, res) => {
+  const result = await cartManager.updateCartProducts(req.params.cid, req.body);
+
+  if (result.error) return res.status(400).json(result);
+
+  res.json({
+    message: "Carrito actualizado",
+    cart: result
+  });
+});
+
+router.put("/:cid/product/:pid", async (req, res) => {
+  const { quantity } = req.body;
+
+  const result = await cartManager.updateProductQuantity(req.params.cid, req.params.pid, quantity);
+
+  if (result.error) return res.status(400).json(result);
+
+  res.json({
+    message: "Cantidad actualizada",
+    cart: result
+  });
+});
+
+router.delete("/:cid", async (req, res) => {
+  const result = await cartManager.clearCart(req.params.cid);
+
+  if (result.error) return res.status(404).json(result);
+
+  res.json({
+    message: "Carrito vaciado",
     cart: result
   });
 });
