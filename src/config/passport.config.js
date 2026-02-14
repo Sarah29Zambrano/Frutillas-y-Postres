@@ -3,6 +3,10 @@ import LocalStrategy from "passport-local";
 import JWTStrategy from "passport-jwt";
 import jwt from "jsonwebtoken";
 import UserManager from "../managers/UserManager.js";
+import UserDTO from "../dtos/UserDTO.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const userManager = new UserManager();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -124,16 +128,9 @@ passport.use("current",
           });
         }
 
-        // Devolver el usuario sin la contraseña
-        return done(null, {
-          userId: user._id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-          age: user.age,
-          cart: user.cart,
-          role: user.role,
-        });
+        // Usar DTO para devolver solo datos necesarios
+        const userDTO = new UserDTO(user);
+        return done(null, userDTO.toJSON());
       } catch (error) {
         return done(null, false, {
           message: "Error al validar el token",

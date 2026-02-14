@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
@@ -36,6 +37,15 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    // Campos para recuperación de contraseña
+    resetPasswordToken: {
+      type: String,
+      default: null,
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -53,9 +63,45 @@ userSchema.methods.comparePassword = function (plainPassword) {
   return bcrypt.compareSync(plainPassword, this.password);
 };
 
+userSchema.methods.generatePasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  
+  // Hashear el token para guardarlo en la BD
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  
+  // Token válido por 1 hora
+  this.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
+
+  return resetToken; // Retornar el token sin hashear para enviar al usuario
+};
+
+// Verificar si el token de recuperación es válido
+userSchema.methods.verifyPasswordResetToken = function (token) {
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  return (
+    this.resetPasswordToken === hashedToken &&
+    this.resetPasswordExpires > Date.now()
+  );
+};
+
+// Limpiar tokens de recuperación después de usar
+userSchema.methods.clearPasswordResetToken = function () {
+  this.resetPasswordToken = null;
+  this.resetPasswordExpires = null;
+};
+
 userSchema.methods.toJSON = function () {
   const user = this.toObject();
   delete user.password;
+  delete user.resetPasswordToken;
+  delete user.resetPasswordExpires;
   return user;
 };
 
